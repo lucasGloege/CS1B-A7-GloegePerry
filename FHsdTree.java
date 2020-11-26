@@ -3,8 +3,6 @@ public class FHsdTree<E> implements Cloneable
    protected int mSize;
    protected FHsdTreeNode<E> mRoot;
    
-   protected boolean deleted; // true if the node has been removed from the tree
-
    public FHsdTree()
    {
       clear();
@@ -53,16 +51,26 @@ public class FHsdTree<E> implements Cloneable
       {
          if (treeNode != null)
             return null; // error something's fishy. treeNode can't right
+         
          mRoot = new FHsdTreeNode<E>(x, null, null, null);
          mRoot.myRoot = mRoot;
          mSize = 1;
          return mRoot;
       }
+      
       if (treeNode == null)
          return null; // error inserting into non_null tree with a null parent
       if (treeNode.myRoot != mRoot)
          return null; // silent error, node does not belong to this tree
 
+      //Check for deleted node
+      if(treeNode.deleted == true)
+      {
+         return null; 
+      }
+      
+      
+      
       // push this node into the head of the sibling list; adjust prev pointers
       FHsdTreeNode<E> newNode = new FHsdTreeNode<E>(x, treeNode.firstChild, null, treeNode, mRoot); // sb, chld, prv, rt
       treeNode.firstChild = newNode;
@@ -79,12 +87,18 @@ public class FHsdTree<E> implements Cloneable
       if (mSize == 0 || root == null)
          return null;
 
+      if(root.deleted == true)
+      {
+         return null;
+      }
+      
       if (root.data.equals(x))
          return root;
 
       // otherwise, recurse. don't process sibs if this was the original call
       if (level > 0 && (retval = find(root.sib, x, level)) != null)
          return retval;
+      
       return find(root.firstChild, x, ++level);
    }
 
@@ -92,12 +106,15 @@ public class FHsdTree<E> implements Cloneable
    {
       FHsdTreeNode<E> tn = null;
 
+      //Check for empty tree
       if (mSize == 0 || root == null)
          return false;
 
+      
       if ((tn = find(root, x, 0)) != null)
       {
          removeNode(tn);
+         tn.deleted = true;
          mSize--;
          return true;
       }
@@ -110,7 +127,7 @@ public class FHsdTree<E> implements Cloneable
          return;
       if (nodeToDelete.myRoot != mRoot)
          return; // silent error, node does not belong to this tree
-
+      
       // remove all the children of this node
       while (nodeToDelete.firstChild != null)
          removeNode(nodeToDelete.firstChild);
@@ -121,7 +138,7 @@ public class FHsdTree<E> implements Cloneable
          nodeToDelete.prev.sib = nodeToDelete.sib; // adjust left sibling
       else
          nodeToDelete.prev.firstChild = nodeToDelete.sib; // adjust parent
-
+      
       // adjust the successor sib's prev pointer
       if (nodeToDelete.sib != null)
          nodeToDelete.sib.prev = nodeToDelete.prev;
@@ -183,7 +200,7 @@ public class FHsdTree<E> implements Cloneable
          return;
       }
 
-      if (treeNode == null)
+      if (treeNode == null || treeNode.deleted == true)
          return;
 
       indent = blankString.substring(0, level);
@@ -192,6 +209,7 @@ public class FHsdTree<E> implements Cloneable
       System.out.println(indent + treeNode.data);
 
       // recursive step done here
+      
       display(treeNode.firstChild, level + 1);
       if (level > 0)
          display(treeNode.sib, level);
@@ -200,7 +218,7 @@ public class FHsdTree<E> implements Cloneable
    // often helper of typical public version, but also callable by on subtree
    public <F extends Traverser<? super E>> void traverse(F func, FHsdTreeNode<E> treeNode, int level)
    {
-      if (treeNode == null)
+      if (treeNode == null || treeNode.deleted == true)
          return;
 
       func.visit(treeNode.data);
@@ -209,5 +227,47 @@ public class FHsdTree<E> implements Cloneable
       traverse(func, treeNode.firstChild, level + 1);
       if (level > 0)
          traverse(func, treeNode.sib, level);
+   }
+   
+   public void displayPhysical()
+   { 
+      int level = 0; 
+      String indent;
+
+      // stop runaway indentation/recursion
+      if (level > (int) blankString.length() - 1)
+      {
+         System.out.println(blankString + " ... ");
+         return;
+      }
+
+      if (mRoot == null)
+         return;
+
+      indent = blankString.substring(0, level);
+
+      // pre-order processing done here ("visit")
+      System.out.println(indent + mRoot.data);
+      if(mRoot.deleted == true)
+      {
+         System.out.print(" (D) ");
+      }
+
+      // recursive step done here
+      
+      display(mRoot.firstChild, level + 1);
+      if (level > 0)
+         display(mRoot.sib, level);
+   }
+   
+   
+   public int sizePhysical()
+   {
+      return mSize; 
+   }
+   
+   public String collectGarbage()
+   {
+      return "hi"; 
    }
 }
