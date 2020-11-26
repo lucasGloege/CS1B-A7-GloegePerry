@@ -74,7 +74,7 @@ public class Foothill
       
       System.out.println("------- Testing Sizes (compare with above) -------- \n");
       System.out.println("virtual (soft) size: " + sceneTree.size()  );
-      System.out.println("physiical (hard) size: " + sceneTree.sizePhysical()  );
+      System.out.println("physical (hard) size: " + sceneTree.sizePhysical()  );
 
       System.out.println("------------ Collecting Garbage ---------------- \n");
       System.out.println("found soft-deleted nodes? " 
