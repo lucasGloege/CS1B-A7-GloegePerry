@@ -3,13 +3,13 @@ import java.util.*;
 
 //------------------------------------------------------
 public class Foothill
-{ 
-   // -------  main --------------
+{
+   // ------- main --------------
    public static void main(String[] args) throws Exception
    {
       FHsdTree<String> sceneTree = new FHsdTree<String>();
       FHsdTreeNode<String> tn;
-      
+
       System.out.println("Starting tree empty? " + sceneTree.empty() + "\n");
       // create a scene in a room
       tn = sceneTree.addChild(null, "room");
@@ -24,7 +24,7 @@ public class Foothill
       // Miguel's left arm
       tn = sceneTree.addChild(tn, "torso");
       tn = sceneTree.addChild(tn, "left arm");
-      tn =  sceneTree.addChild(tn, "left hand");
+      tn = sceneTree.addChild(tn, "left hand");
       sceneTree.addChild(tn, "thumb");
       sceneTree.addChild(tn, "index finger");
       sceneTree.addChild(tn, "middle finger");
@@ -35,7 +35,7 @@ public class Foothill
       tn = sceneTree.find("Miguel the human");
       tn = sceneTree.find(tn, "torso", 0);
       tn = sceneTree.addChild(tn, "right arm");
-      tn =  sceneTree.addChild(tn, "right hand");
+      tn = sceneTree.addChild(tn, "right hand");
       sceneTree.addChild(tn, "thumb");
       sceneTree.addChild(tn, "index finger");
       sceneTree.addChild(tn, "middle finger");
@@ -61,36 +61,28 @@ public class Foothill
 
       System.out.println("\n------------ Loaded Tree ----------------- \n");
       sceneTree.display();
-      
       sceneTree.remove("spare mutant paw");
       sceneTree.remove("Miguel the human");
       sceneTree.remove("an imagined higgs boson");
-      
       System.out.println("\n------------ Virtual (soft) Tree --------------- \n");
       sceneTree.display();
-
       System.out.println("\n----------- Physical (hard) Display ------------- \n");
       sceneTree.displayPhysical();
-      
       System.out.println("------- Testing Sizes (compare with above) -------- \n");
-      System.out.println("virtual (soft) size: " + sceneTree.size()  );
-      System.out.println("physical (hard) size: " + sceneTree.sizePhysical()  );
-
+      System.out.println("virtual (soft) size: " + sceneTree.size());
+      System.out.println("physical (hard) size: " + sceneTree.sizePhysical());
       System.out.println("------------ Collecting Garbage ---------------- \n");
-      System.out.println("found soft-deleted nodes? " 
-            + sceneTree.collectGarbage()  );
-      System.out.println("immediate collect again? " 
-            + sceneTree.collectGarbage()  );
+      System.out.println("found soft-deleted nodes? " + sceneTree.collectGarbage());
+      System.out.println("immediate collect again? " + sceneTree.collectGarbage());
 
-      System.out.println("--------- Hard Display after garb col ------------ \n");
+      System.out.println("--------- Hard Display after garbage collection ------------ \n");
 
       sceneTree.displayPhysical();
 
       System.out.println("Semi-deleted tree empty? " + sceneTree.empty() + "\n");
       sceneTree.remove("room");
-      System.out.println("Completely-deleted tree empty? " + sceneTree.empty() 
-         + "\n");
-      
+      System.out.println("Completely-deleted tree empty? " + sceneTree.empty() + "\n");
+
       sceneTree.display();
    }
 }
