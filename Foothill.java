@@ -207,7 +207,10 @@ class FHsdTree<E> implements Cloneable
       
       if (mSize == 0 || root == null)
          return false;
-
+      
+      if(find(mRoot, x, 0) == null)
+         return false; 
+      
       if(mRoot.data == x)
       {
          mSize = 0;
@@ -365,7 +368,7 @@ class FHsdTree<E> implements Cloneable
          if(root.deleted != true)
             return root;
          else
-            return root.prev;
+            return null;
 
       // otherwise, recurse. don't process sibs if this was the original call
       if (level > 0 && (retval = find(root.sib, x, level)) != null)
