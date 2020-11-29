@@ -2,8 +2,6 @@ public class FHsdTree<E> implements Cloneable
 {
    protected int mSize;
    protected FHsdTreeNode<E> mRoot;
-   protected int physicalSize; 
-   protected boolean garbageCollected; 
    
    public FHsdTree()
    {
@@ -17,15 +15,32 @@ public class FHsdTree<E> implements Cloneable
 
    public int size()
    {
-      return mSize;
+      return getSoftSize(mRoot, 0, 0);
+   }
+   
+   public int getSoftSize(FHsdTreeNode<E> parent, int level, int count)
+   {
+      if(parent != null)
+      {
+         if(parent.deleted == false)
+         {
+            count++;
+            count = getSoftSize(parent.firstChild, level + 1, count);
+         }
+         
+         if (level > 0)
+            count = getSoftSize(parent.sib, level, count); 
+               //if(parent.sib.sib != null)
+                 // count = getSoftSize(parent.sib.sib, level, count);    
+               
+      }
+      return count;
    }
 
    public void clear()
    {
       mSize = 0;
       mRoot = null;
-      physicalSize = 0; 
-      garbageCollected = false;
    }
 
    public FHsdTreeNode<E> find(E x)
@@ -56,15 +71,13 @@ public class FHsdTree<E> implements Cloneable
       if ((tn = find(root, x, 0)) != null)
       {
          tn.deleted = true; 
-         mSize--;
          return true;
       }
       return false;
    }
    
    private void removeNode(FHsdTreeNode<E> nodeToDelete)
-   {
-      garbageCollected = true;  
+   { 
       if (nodeToDelete == null || mRoot == null)
          return;
       if (nodeToDelete.myRoot != mRoot)
@@ -83,9 +96,9 @@ public class FHsdTree<E> implements Cloneable
 
       // adjust the successor sib's prev pointer
       if (nodeToDelete.sib != null)
-         nodeToDelete.sib.prev = nodeToDelete.prev;
-      
+         nodeToDelete.sib.prev = nodeToDelete.prev; 
    }
+   
    
    public void display()
    {
@@ -114,9 +127,6 @@ public class FHsdTree<E> implements Cloneable
          // pre-order processing done here ("visit")
          System.out.println(indent + treeNode.data);
       }
-      
-      
-
       // recursive step done here
       if(treeNode.firstChild != null)
          if(treeNode.firstChild.deleted != true && treeNode.deleted != true)
@@ -131,11 +141,11 @@ public class FHsdTree<E> implements Cloneable
 
    public void displayPhysical()
    {
-      displayP(mRoot, 0); 
+      displayPhysical(mRoot, 0); 
    }
    
    //Prints out deleted nodes as well
-   public void displayP(FHsdTreeNode<E> treeNode, int level)
+   public void displayPhysical(FHsdTreeNode<E> treeNode, int level)
    {
       String indent;
 
@@ -158,9 +168,9 @@ public class FHsdTree<E> implements Cloneable
       System.out.println(output);
       
       // recursive step done here
-      displayP(treeNode.firstChild, level + 1);
+      displayPhysical(treeNode.firstChild, level + 1);
       if (level > 0)
-         displayP(treeNode.sib, level);
+         displayPhysical(treeNode.sib, level);
    }
    
    public <F extends Traverser<? super E>> void traverse(F func)
@@ -178,7 +188,6 @@ public class FHsdTree<E> implements Cloneable
          mRoot = new FHsdTreeNode<E>(x, null, null, null);
          mRoot.myRoot = mRoot;
          mSize = 1;
-         physicalSize = 1; 
          return mRoot;
       }
       if (treeNode == null)
@@ -192,7 +201,6 @@ public class FHsdTree<E> implements Cloneable
       if (newNode.sib != null)
          newNode.sib.prev = newNode;
       ++mSize;
-      ++physicalSize;
       return newNode;
    }
 
@@ -282,16 +290,15 @@ public class FHsdTree<E> implements Cloneable
 
    public int sizePhysical()
    {
-      return physicalSize;
+      return mSize;  
    }
 
    public boolean collectGarbage()
    {
-      collectG(mRoot, 0);
-      return garbageCollected; 
+      return collectGarbage(mRoot, 0);
    }
    
-   public boolean collectG(FHsdTreeNode<E> root, int level)
+   public boolean collectGarbage(FHsdTreeNode<E> root, int level)
    {
       if(root.deleted == true)
       {
@@ -301,16 +308,16 @@ public class FHsdTree<E> implements Cloneable
       
       if(root.firstChild != null)
          if(root.firstChild.deleted != true)
-            collectG(root.firstChild, level + 1);
+            collectGarbage(root.firstChild, level + 1);
          else  
             removeNode(root.firstChild);
         
       if(root.sib != null)
          if(level > 0 && root.sib.deleted != true)
-            collectG(root.sib, level);
+            collectGarbage(root.sib, level);
          else if(root.sib.deleted == true)
             removeNode(root.sib);
-         
-      return false;
+      
+      return true;
    }
 }

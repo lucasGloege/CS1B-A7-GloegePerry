@@ -2,5 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/Assignment 1/lib/junit-tools.jar"/>
+	<classpathentry kind="lib" path="/Assignment 1/lib/jmockit.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

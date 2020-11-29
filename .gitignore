@@ -4,3 +4,10 @@
 /Traverser.class
 /FHsdTreeNode.class
 /FHsdTree.class
+/Card$Suit.class
+/Card.class
+/CardTraverser.class
+/FHsdTreeNodeTest.class
+/FHsdTreeTest.class
+/IntegrationTests.class
+/TestSuite.class
