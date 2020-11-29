@@ -233,6 +233,12 @@ class FHsdTree<E> implements Cloneable
       if (nodeToDelete.myRoot != mRoot)
          return; // silent error, node does not belong to this tree
 
+      if(nodeToDelete == mRoot)
+      {
+         mRoot = null;
+         mSize = 0; 
+         return;
+      }
       // remove all the children of this node
       while (nodeToDelete.firstChild != null)
          removeNode(nodeToDelete.firstChild);
@@ -431,7 +437,10 @@ class FHsdTree<E> implements Cloneable
          return;
       
       if(treeNode.deleted)
+      {
+         traverse(func, treeNode.sib, level);
          return;
+      }
       
       func.visit(treeNode.data);
 
@@ -439,6 +448,7 @@ class FHsdTree<E> implements Cloneable
       traverse(func, treeNode.firstChild, level + 1);
       if (level > 0)
          traverse(func, treeNode.sib, level);
+         
    }
 
    // Prints out tree, INCLUDING deleted nodes
