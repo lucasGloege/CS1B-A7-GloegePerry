@@ -522,12 +522,8 @@ class FHsdTree<E> implements Cloneable
       garbageCollected(treeNode.firstChild, level + 1);
       if(level > 0)
          garbageCollected(treeNode.sib, level); 
-      
-      
       return true; 
    }
-
-
 }
 /*
 Run:
@@ -622,7 +618,7 @@ physical (hard) size: 30
 ------------ Collecting Garbage ---------------- 
 
 found soft-deleted nodes? true
-immediate collect again? true
+immediate collect again? false
 --------- Hard Display after garbage collection ------------ 
 
 room
@@ -641,5 +637,4 @@ room
 Semi-deleted tree empty? false
 
 Completely-deleted tree empty? true
-
 */
