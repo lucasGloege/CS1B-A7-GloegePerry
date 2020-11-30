@@ -461,27 +461,31 @@ class FHsdTree<E> implements Cloneable
 
    public boolean collectGarbage()
    {
-      //if(garbageCollected)
-        // return false;
-      //else
-        // garbageCollected = true;
+      if(garbageCollected)
+         return false;
       return collectGarbage(mRoot, 0);
    }
    
    public boolean collectGarbage(FHsdTreeNode<E> root)
    {
+      if(garbageCollected)
+         return false;
       return collectGarbage(root,0);
    }
    public boolean collectGarbage(FHsdTreeNode<E> root, int level)
    { 
+      if(root == null)
+         return true; 
+      
       if(root.deleted == true)
       {
+         collectGarbage(root.sib, level);
          removeNode(root);
+         
          return true;
       }
       
       if(root.firstChild != null)
-         if(root.firstChild.deleted != true)
             collectGarbage(root.firstChild, level + 1);
          else  
          {
@@ -489,14 +493,41 @@ class FHsdTree<E> implements Cloneable
          }
         
       if(root.sib != null)
-         if(level > 0 && root.sib.deleted != true)
+         if(level > 0)
             collectGarbage(root.sib, level);
-         else if(root.sib.deleted == true)
+         else 
          {
             removeNode(root.sib);
+            collectGarbage(root.sib, level);
          }
+      garbageCollected = true;
       return true;
    }
+
+   public boolean garbageCollected()
+   {
+      return garbageCollected(mRoot, 0);
+   }
+   
+   public boolean garbageCollected(FHsdTreeNode<E> treeNode, int level)
+   {
+      if(treeNode == null)
+         return true; 
+      
+      if(treeNode.deleted == true)
+      {
+         return false;
+      }
+      
+      garbageCollected(treeNode.firstChild, level + 1);
+      if(level > 0)
+         garbageCollected(treeNode.sib, level); 
+      
+      
+      return true; 
+   }
+
+
 }
 /*
 Run:
